@@ -5,7 +5,7 @@
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/DaanVanVugt/ruby-mc/ci.yml)](https://github.com/DaanVanVugt/ruby-mc/actions/workflows/ci.yml)
 [![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/DaanVanVugt/ruby-mc)](https://codeclimate.com/github/DaanVanVugt/ruby-mc)
 
-TODO: Description of this gem goes here.
+Use Monte-Carlo methods for business forecasting. Define transition methods (for example a month-based one) and keep track of events you are interested in. Automatically generates a 95% confidence interval and mean values.
 
 ---
 
@@ -23,6 +23,17 @@ gem install mc_forecast
 
 ```ruby
 require "mc_forecast"
+# all arguments optional
+e = McForecast::Simulation.new.run(init_state: nil, steps: 1, trials: 1_000) do |_state, _step, _trial|
+  events = {}
+  events[:coin] = rand > 0.5 ? 1 : 0
+
+  # block should return a new state and a hash of events
+  [nil, events]
+end
+# e[:coin][:mean][0] ~ 0.5
+# e[:coin][:quantiles][0.025][0] ~ 0
+# e[:coin][:quantiles][0.975][0] ~ 1
 ```
 
 ## Support

@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 gemspec
 
+gem "deep_dup"
 gem "minitest", "~> 5.11"
 gem "minitest-reporters", "~> 1.3"
 gem "rake", "~> 13.0"

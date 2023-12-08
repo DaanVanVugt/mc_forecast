@@ -8,3 +8,6 @@
 /spec/reports/
 /tmp/
 /Gemfile.lock
+
+.byebug_history
+*.gem
