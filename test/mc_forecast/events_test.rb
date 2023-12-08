@@ -1,4 +1,3 @@
-
 require "test_helper"
 require "mc_forecast"
 
@@ -11,6 +10,6 @@ class EventsTest < Minitest::Test
       [nil, events]
     end
 
-    assert_in_delta(0.5, e[:coin][0], 0.05)
+    assert_in_delta(0.5, e[:coin][:mean], 0.05)
   end
 end
