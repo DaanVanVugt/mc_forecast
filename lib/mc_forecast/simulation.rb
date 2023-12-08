@@ -29,9 +29,15 @@ module McForecast
     # }}}
     def analyze(events, quantiles)
       events.transform_values do |steps| # array(steps) of arrays(trials)
-        a = steps.map do |trials|
-          trials.sort.values_at(*quantile_indices(trials.length, quantiles))
-        end.transpose # a[step][]
+        a = if quantiles.any?
+              # only need to sort if we request answers on any quantiles
+              steps.map do |trials|
+                # could avoid sorting with some creativity, but probably fine for our data lengths so far
+                trials.sort.values_at(*quantile_indices(trials.length, quantiles))
+              end.transpose # a[step][]
+            else
+              []
+            end
 
         {
           mean: steps.map { |trials| Rational(trials.sum || 0, trials.length) },
