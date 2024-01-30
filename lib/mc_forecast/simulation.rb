@@ -2,7 +2,7 @@ require "deep_dup"
 
 module McForecast
   class Simulation
-    def run(init_state: nil, trials: 1_000, steps: 1, quantiles: [0.025, 0.975])
+    def run(init_state: nil, trials: 1_000, steps: 1, quantiles: [0.025, 0.16, 0.84, 0.975])
       events = {}
       (0..trials - 1).each do |trial|
         state = DeepDup.deep_dup(init_state)
