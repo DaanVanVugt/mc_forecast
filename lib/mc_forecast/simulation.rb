@@ -39,7 +39,7 @@ module McForecast
           sum: sum(steps, quantiles),
           # besides the total sum we may want to have a sum for multiples of our base period
           # (or week/month/quarter/year but that gets a bit complicated)
-          mean: steps.map { |trials| Rational(trials.sum || 0, trials.length) },
+          mean: steps.map { |trials| (trials.sum || 0).to_f / trials.length },
           quantiles: quantiles.zip(step_quantiles(quantiles, steps)).to_h
         }
       end
@@ -48,7 +48,8 @@ module McForecast
     def sum(steps, quantiles)
       sums = steps.transpose.map(&:sum) # gives a sum of this event, per trial
       {
-        mean: Rational(sums.sum || 0, steps[0].length), # should we return floats instead?
+        mean: (sums.sum || 0).to_f / steps[0].length,
+        # sort all of the sums, and take the elements closest to the chosen quantiles, and then make a nice hash
         quantiles: quantiles.zip(sums.sort.values_at(*quantile_indices(steps[0].length, quantiles))).to_h
       }
     end

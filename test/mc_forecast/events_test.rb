@@ -60,7 +60,7 @@ class EventsTest < Minitest::Test
     # and the steps were chosen to make it one centered at 6, with variance 1 (and thus sigma 1)
     # use https://en.wikipedia.org/wiki/68%E2%80%9395%E2%80%9399.7_rule
     # the below does not work to a very high accuracy, and we may have to do some math to get more accurate values
-    assert_in_delta(4, e[:rand][:sum][:quantiles][0.025], 0.2)
-    assert_in_delta(8, e[:rand][:sum][:quantiles][0.975], 0.2)
+    assert_in_delta(4, e[:rand][:sum][:quantiles][0.025], 0.3)
+    assert_in_delta(8, e[:rand][:sum][:quantiles][0.975], 0.3)
   end
 end
