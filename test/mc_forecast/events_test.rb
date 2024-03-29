@@ -65,8 +65,8 @@ class EventsTest < Minitest::Test
   end
 
   def test_ranges_analysis_with_specific_ranges # rubocop:disable Minitest/MultipleAssertions
-    n_steps = 22 # Adjusted to ensure the range up to 21 is included
-    ranges = [0..9, 10..21] # Define the specified ranges to analyze
+    n_steps = 22
+    ranges = [0..9, 10..21]
 
     e = McForecast::Simulation.new.run(steps: n_steps, ranges: ranges) do |_state, step, _trial|
       events = {}
