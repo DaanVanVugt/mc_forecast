@@ -64,6 +64,19 @@ class EventsTest < Minitest::Test
     assert_in_delta(8, e[:rand][:sum][:quantiles][0.975], 0.3)
   end
 
+  def test_ranges_zero
+    n_steps = 22
+    ranges = [0..9, 10..21]
+    e = McForecast::Simulation.new.run(steps: n_steps, ranges: ranges) do |_state, _step, _trial|
+      events = {}
+      events[:zero] = 0
+
+      [nil, events]
+    end
+    assert_in_delta(0, e[:zero][:ranges][ranges[0]][:mean], 0.03)
+    assert_in_delta(0, e[:zero][:ranges][ranges[1]][:mean], 0.03)
+  end
+
   def test_ranges_one # rubocop:disable Minitest/MultipleAssertions
     n_steps = 22
     ranges = [0..9, 10..21]
