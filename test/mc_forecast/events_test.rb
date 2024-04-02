@@ -64,57 +64,39 @@ class EventsTest < Minitest::Test
     assert_in_delta(8, e[:rand][:sum][:quantiles][0.975], 0.3)
   end
 
-  def test_ranges_analysis_with_specific_ranges # rubocop:disable Minitest/MultipleAssertions
+  def test_ranges_one # rubocop:disable Minitest/MultipleAssertions
     n_steps = 22
     ranges = [0..9, 10..21]
-
-    e = McForecast::Simulation.new.run(steps: n_steps, ranges: ranges) do |_state, step, _trial|
+    e = McForecast::Simulation.new.run(steps: n_steps, ranges: ranges) do |_state, _step, _trial|
       events = {}
-      # Use a simple linear function for the event values: event value = step
-      events[:linear] = step
+      events[:one] = 1
 
       [nil, events]
     end
 
-    # Test the mean calculations for each range
-    # For the first range (0..9), the mean should be the midpoint, i.e., 4.5
-    assert_in_delta(4.5, e[:linear][:ranges][0..9][:mean][0], 0.05, "Mean calculation for the first range is incorrect")
-    # For the second range (10..21), the mean should be the midpoint, i.e., 15.5
-    assert_in_delta(
-      15.5,
-      e[:linear][:ranges][10..21][:mean][0],
-      0.05,
-      "Mean calculation for the second range is incorrect"
-    )
+    assert_in_delta(ranges[0].size, e[:one][:ranges][ranges[0]][:mean], 0.03)
+    assert_in_delta(ranges[0].size, e[:one][:ranges][ranges[0]][:quantiles][0.025], 0.03)
+    assert_in_delta(ranges[0].size, e[:one][:ranges][ranges[0]][:quantiles][0.975], 0.03)
+    assert_in_delta(ranges[1].size, e[:one][:ranges][ranges[1]][:mean], 0.03)
+    assert_in_delta(ranges[1].size, e[:one][:ranges][ranges[1]][:quantiles][0.025], 0.03)
+    assert_in_delta(ranges[1].size, e[:one][:ranges][ranges[1]][:quantiles][0.975], 0.03)
+  end
 
-    # Test the quantile calculations for each range
-    # For a linear sequence, the quantiles at 0.025 and 0.975 should closely match the start and end of the range, respectively.
-    # For the first range (0..9)
-    assert_in_delta(
-      0,
-      e[:linear][:ranges][0..9][:quantiles][0.025][0],
-      0.05,
-      "Quantile calculation at 0.025 for the first range is incorrect"
-    )
-    assert_in_delta(
-      9,
-      e[:linear][:ranges][0..9][:quantiles][0.975][0],
-      0.05,
-      "Quantile calculation at 0.975 for the first range is incorrect"
-    )
+  def test_ranges_rand # rubocop:disable Minitest/MultipleAssertions
+    n_steps = 22
+    ranges = [0..9, 10..21]
+    e = McForecast::Simulation.new.run(steps: n_steps, ranges: ranges) do |_state, _step, _trial|
+      events = {}
+      events[:rand] = rand
 
-    # For the second range (10..21)
-    assert_in_delta(
-      10,
-      e[:linear][:ranges][10..21][:quantiles][0.025][0],
-      0.05,
-      "Quantile calculation at 0.025 for the second range is incorrect"
-    )
-    assert_in_delta(
-      21,
-      e[:linear][:ranges][10..21][:quantiles][0.975][0],
-      0.05,
-      "Quantile calculation at 0.975 for the second range is incorrect"
-    )
+      [nil, events]
+    end
+
+    assert_in_delta(5, e[:rand][:ranges][ranges[0]][:mean], 0.1)
+    assert_in_delta(3, e[:rand][:ranges][ranges[0]][:quantiles][0.025], 0.5)
+    assert_in_delta(7, e[:rand][:ranges][ranges[0]][:quantiles][0.975], 0.5)
+    assert_in_delta(6, e[:rand][:ranges][ranges[1]][:mean], 0.1)
+    assert_in_delta(4, e[:rand][:ranges][ranges[1]][:quantiles][0.025], 0.3)
+    assert_in_delta(8, e[:rand][:ranges][ranges[1]][:quantiles][0.975], 0.3)
   end
 end

@@ -29,8 +29,8 @@ module McForecast
     #       0..12: { mean: ..., quantiles: { 0.025: ..., 0.975: ... }},
     #       13..24: { mean: ..., quantiles: { 0.025: ..., 0.975: ... }},
     #       ...
-    #       0..N: { mean: ..., quantiles: { 0.025: ..., 0.975: ... }}
     #     },
+    #     sum: { mean: ..., quantiles: { 0.025: ..., 0.975: ... }},
     #     mean: [...], # per step
     #     quantiles:
     #      { 0.025: [...],
@@ -49,12 +49,17 @@ module McForecast
       end
     end
 
-    def analyze_ranges(steps, quantiles, ranges)
-      ranges.each_with_object({}) do |range, range_analysis|
-        range_steps = steps[range]
-        range_analysis[range] = {
-          mean: range_steps.map { |trials| (trials.sum || 0).to_f / trials.length },
-          quantiles: quantiles.zip(step_quantiles(quantiles, range_steps)).to_h
+    def analyze_ranges(steps, quantiles, ranges) # rubocop:disable Metrics/AbcSize
+      ranges.each_with_object({}) do |range, results|
+        range_sums = steps.slice(range).transpose.map(&:sum)
+
+        results[range] = {
+          mean: range_sums.sum.to_f / range_sums.length,
+          quantiles: quantiles.zip(
+            quantiles.map do |q|
+              range_sums.sort[(q * (range_sums.length - 1)).round.clamp(0, range_sums.length - 1)]
+            end
+          ).to_h
         }
       end
     end
