@@ -17,7 +17,6 @@ module McForecast
           end
         end
       end
-      puts "Analyzing events: #{events}"
       analyze(events, quantiles, ranges)
     end
 
